@@ -5,41 +5,69 @@ mixColumn = [
   [3,1,1,2]
 ]
 
-def xor1(element):
-  return element
+def shiftRight(element):
+  return element[1:]+'0'
+
+def xor(element1, element2):
+  result = ''
+  for i in range (0, len(element1)):
+    if (element1[i] != element2[i]):
+      result += '1'
+    else:
+      result += '0'
+  return result
+
 def xor2(element):  
   firstBit = element[0]
-  elementAferShift = bin(int(element, 2)) << 1
-  # print(elementAferShift)
-  # Check if the 1st bit is set:
-  if (firstBit == 1):
-    print("maka xor dengan lalala")
+  element = shiftRight(element)
+  if (firstBit == '1'):
+    return xor(element, '00011011')
+  
   return element
+  
 def xor3(element): 
-  return element
+  elementAfterXor2 = xor2(element)
+  return xor(elementAfterXor2, element)
 
-def multiply(element, mixColumnNumber):
-  element = '{0:08b}'.format(int(element, 16))
-  if (mixColumnNumber == 2):
-    return xor2(element)
-  elif (mixColumnNumber == 3):
-    return xor3(element)
+def multiply(elementMCNumber, elementColumn):
+  elementColumnBinary = '{0:08b}'.format(int(elementColumn, 16))
+  if (elementMCNumber == 2):
+    return xor2(elementColumnBinary)
+  elif (elementMCNumber == 3):
+    return xor3(elementColumnBinary)
   else :
-    return xor1(element)
-  # return "{} x {}".format(element, mixColumnNumber)
+    return elementColumnBinary
 
-def calculate(array):
-  listMultiply = []
-  for i in range(0, len(array)):
-    listMultiply.append(multiply(array[i], mixColumn[0][i]))
-  sumMixColumn(listMultiply)
+def calculate(row, column):
+  multiplyAnswerList = []  
+  for i in range(0, 4):
+    multiplyAnswerList.append(multiply(row[i], column[i]))
+  sumMixColumn(multiplyAnswerList)
 
-def sumMixColumn(listMultiply):
-  print(listMultiply)
+def multipleColumn(mixColumn, column):
+  for i in range(0, 4):
+    calculate(mixColumn[i], column)
+
+def sumMixColumn(multiplyAnswerList):
+  answer = '00000000'
+  for entry in multiplyAnswerList:
+    answer = xor(answer, entry)
+  print(hex(int(answer, 2)))
 
 def main():
-  # array = input("Input array (split by \',\'): ")
-  array = "63,6B,67,76"
-  calculate(array.split(','))
+  column = [
+    # COLUMN 1
+    ["87","6E","46","A6"],
+    # COLUMN 2
+    ["F2","4C","E7","8C"],
+    # COLUMN 3
+    ["4D","90","4A","D8"],
+    # COLUMN 4
+    ["97","EC","C3","95"],
+  ]
+  for i in range(0, 4):
+    print("Column ke-{}: ".format(i+1))
+    multipleColumn(mixColumn, column[i])
+    print('\n')
 
 main()
